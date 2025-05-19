@@ -3,9 +3,7 @@ package com.simibubi.create.content.contraptions.actors.contraptionControls;
 import java.util.Iterator;
 import java.util.List;
 
-import com.simibubi.create.content.trains.entity.Carriage;
-import com.simibubi.create.content.trains.entity.CarriageContraptionEntity;
-import com.simibubi.create.content.trains.entity.Train;
+import com.simibubi.create.AllTags.AllItemTags;
 
 import org.apache.commons.lang3.tuple.MutablePair;
 
@@ -37,7 +35,7 @@ public class ContraptionControlsMovingInteraction extends MovingInteractionBehav
 
 	@Override
 	public boolean handlePlayerInteraction(Player player, InteractionHand activeHand, BlockPos localPos,
-		AbstractContraptionEntity contraptionEntity) {
+										   AbstractContraptionEntity contraptionEntity) {
 		Contraption contraption = contraptionEntity.getContraption();
 
 		MutablePair<StructureBlockInfo, MovementContext> actor = contraption.getActorAt(localPos);
@@ -102,30 +100,15 @@ public class ContraptionControlsMovingInteraction extends MovingInteractionBehav
 		ContraptionControlsBlockEntity.sendStatus(player, filter, !disable);
 		send(contraptionEntity, filter, disable);
 
-		if (contraptionEntity instanceof CarriageContraptionEntity cce) {
-			Carriage carriage = cce.getCarriage();
-			Train train = carriage.train;
-			for (Carriage c : train.carriages) {
-				Contraption cpt = c.anyAvailableEntity().getContraption();
-
-				cpt.setActorsActive(filter, !disable);
-				ContraptionControlsBlockEntity.sendStatus(player, filter, !disable);
-				send(cpt.entity, filter, disable);
-
-				AllSoundEvents.CONTROLLER_CLICK.play(player.level(), null,
-					BlockPos.containing(contraptionEntity.toGlobalVector(Vec3.atCenterOf(localPos), 1)), 1, disable ? 0.8f : 1.5f);
-			}
-		}
-
 		AllSoundEvents.CONTROLLER_CLICK.play(player.level(), null,
 			BlockPos.containing(contraptionEntity.toGlobalVector(Vec3.atCenterOf(localPos), 1)), 1, disable ? 0.8f : 1.5f);
 
 		if (!(contraptionEntity instanceof CarriageContraptionEntity cce))
 			return true;
-		if (!filter.is(ItemTags.DOORS))
+		if (!(filter.is(ItemTags.DOORS) || filter.is(AllItemTags.TRAIN_CONTROLLED.tag)))
 			return true;
-		
-		// Special case: Doors are toggled on all carriages of a train
+
+		// Special case: Doors and "TRAIN_CONTROLLED" tagged blocks are toggled on all carriages of a train
 		Carriage carriage = cce.getCarriage();
 		Train train = carriage.train;
 		for (Carriage c : train.carriages) {
@@ -147,7 +130,7 @@ public class ContraptionControlsMovingInteraction extends MovingInteractionBehav
 	}
 
 	private boolean elevatorInteraction(BlockPos localPos, AbstractContraptionEntity contraptionEntity,
-		ElevatorContraption contraption, MovementContext ctx) {
+										ElevatorContraption contraption, MovementContext ctx) {
 		Level level = contraptionEntity.level();
 		if (!level.isClientSide()) {
 			BlockPos pos = BlockPos.containing(contraptionEntity.toGlobalVector(Vec3.atCenterOf(localPos), 1));

@@ -105,10 +105,10 @@ public class ContraptionControlsMovingInteraction extends MovingInteractionBehav
 
 		if (!(contraptionEntity instanceof CarriageContraptionEntity cce))
 			return true;
-		if (!(filter.is(ItemTags.DOORS) || filter.is(AllItemTags.TRAIN_CONTROLLED.tag)))
+		if (!filter.is(AllItemTags.TRAIN_CONTROLLED.tag))
 			return true;
 
-		// Special case: Doors and "TRAIN_CONTROLLED" tagged blocks are toggled on all carriages of a train
+		// Special case: "TRAIN_CONTROLLED" tagged blocks are toggled on all carriages of a train
 		Carriage carriage = cce.getCarriage();
 		Train train = carriage.train;
 		for (Carriage c : train.carriages) {

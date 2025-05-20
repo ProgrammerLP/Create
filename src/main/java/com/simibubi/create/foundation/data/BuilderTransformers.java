@@ -173,6 +173,7 @@ public class BuilderTransformers {
 			.loot((lr, block) -> lr.add(block, lr.createDoorTable(block)))
 			.item()
 			.tag(ItemTags.DOORS)
+			.tag(AllItemTags.TRAIN_CONTROLLED.tag)
 			.tag(AllItemTags.CONTRAPTION_CONTROLLED.tag)
 			.model((c, p) -> p.blockSprite(c, p.modLoc("item/" + type + "_door")))
 			.build();
